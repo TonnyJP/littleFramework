@@ -1,8 +1,8 @@
-import { AxiosResponse } from "axios";
 import { Attributes } from "./Attributes";
 import { Eventing } from "./Eventing";
-import { Sync } from "./Sync";
+import { ApiSync } from "./ApiSync";
 import { Model } from "./Model";
+import { Collection } from "./Collection";
 
 export type UserProps = {
   name?: string;
@@ -11,53 +11,24 @@ export type UserProps = {
 };
 
 const rootURL: string = "http://localhost:3000/users";
-/**
- * before the factoring for better reusable code
- */
-export class User {
-  public events: Eventing = new Eventing();
-  public sync: Sync<UserProps> = new Sync<UserProps>(rootURL);
-  public attributes: Attributes<UserProps>;
-  constructor(data: UserProps) {
-    this.attributes = new Attributes<UserProps>(data);
+
+export class User extends Model<UserProps> {
+  static buildUser(attrs: UserProps) {
+    return new User(
+      new Attributes<UserProps>(attrs),
+      new Eventing(),
+      new ApiSync(rootURL)
+    );
   }
 
-  get on() {
-    return this.events.on;
+  static buildUserCollection(): Collection<User, UserProps> {
+    return new Collection<User, UserProps>(
+      rootURL,
+      (json: UserProps): User => User.buildUser(json)
+    );
   }
-
-  get trigger() {
-    return this.events.trigger;
-  }
-
-  get get() {
-    return this.attributes.get;
-  }
-
-  set(update: UserProps) {
-    this.attributes.set(update);
-    this.events.trigger("change");
-  }
-
-  fetch(): void {
-    const id = this.get("id");
-    if (typeof id != "number") {
-      throw new Error("Cannot fetch without Id");
-    }
-
-    this.sync.fetch(id).then((response: AxiosResponse): void => {
-      this.set(response.data);
-    });
-  }
-
-  save(): void {
-    this.sync
-      .save(this.attributes.getAll())
-      .then((response: AxiosResponse): void => {
-        this.trigger("save");
-      })
-      .catch((error: Error): void => {
-        this.trigger("error");
-      });
+  setRandomAge(): void {
+    const age = Math.round(Math.random() * 100);
+    this.set({ age });
   }
 }

@@ -1,10 +1,6 @@
 import { AxiosPromise, AxiosResponse } from "axios";
-import { Attributes } from "./Attributes";
-import { Eventing } from "./Eventing";
-import { UserProps } from "./User";
 
-const rootURL: string = "http://localhost:3000/users";
-type HasId = {
+export type HasId = {
   id?: number;
 };
 interface ModelAttributes<T extends HasId> {
@@ -23,31 +19,20 @@ interface Events {
 }
 
 export class Model<T extends HasId> {
-  /* public events: Eventing = new Eventing();
-  public sync: Sync<UserProps> = new Sync<UserProps>(rootURL);
-  public attributes: Attributes<UserProps>; */
-
   constructor(
     private attributes: ModelAttributes<T>,
     private events: Events,
     private sync: Sync<T>
-  ) {
-    /* this.attributes = new Attributes<UserProps>(data); */
-  }
+  ) {}
 
-  get on() {
-    return this.events.on;
-  }
+  on = this.events.on; // this way only works if the object we need isn't initialized in the body of the constructor (hier we need "event" to access on methode)
 
-  get trigger() {
-    return this.events.trigger;
-  }
+  trigger = this.events.trigger;
 
-  get get() {
-    return this.attributes.get;
-  }
+  get = this.attributes.get;
 
   set(update: T) {
+    console.log("setter call", update);
     this.attributes.set(update);
     this.events.trigger("change");
   }

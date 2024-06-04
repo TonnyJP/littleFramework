@@ -9,6 +9,16 @@
       "name": "new record",
       "age": 28,
       "id": 2
+    },
+    {
+      "name": "Modeste",
+      "age": 24,
+      "id": 3
+    },
+    {
+      "name": "tengen miho oh",
+      "age": 43,
+      "id": 4
     }
   ]
 }

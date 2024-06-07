@@ -16,3 +16,25 @@ users.on("change", () => {
   }
 });
 users.fetch();
+
+const test = 1234.76;
+console.log(test.toExponential(), typeof test.toExponential());
+console.log(test.toFixed(1), typeof test.toFixed());
+console.log(test.toPrecision(1), typeof test.toPrecision());
+
+console.log(String(100 + 23));
+
+const posts = {
+  id: 1,
+  title: "Post Titel",
+  body: "Post Body",
+};
+
+for (const post in posts) {
+  console.log("in", post);
+}
+
+const test1: number[] = [1, 2, 3, 4, 5, 6];
+for (const post of test1) {
+  console.log("of", post);
+}
